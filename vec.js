@@ -40,6 +40,9 @@ class Vec {
 		return new Vec(v.x, v.y);
 	}
 
+	get angle() {
+		return Math.atan2(this.y, this.x);
+	}
 	get abs() {
 		return new Vec(Math.abs(this.x), Math.abs(this.y));
 	}
@@ -50,7 +53,6 @@ class Vec {
 		return this.dot(this);
 	}
 	get unit() {
-		let mag = this.mag;
-		return this.div(mag, mag);
+		return this.divs(this.mag);
 	}
 }
