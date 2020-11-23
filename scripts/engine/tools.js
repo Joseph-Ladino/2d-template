@@ -10,33 +10,33 @@ function lerpv(v1, v2, t) {
 	return v1.mlts(1 - t).add(v2.mlts(t));
 }
 
-function screenPointToWorldPoint(v) {
-	// translate by element offset and scale by ratio of buffer size to element size
+function screenPointToWorldPoint(display, v) {
+	// translate by element offset and scale by ratio of buffer size to canvas size
 	return new Vec(
 		((v.x - display.can.offsetLeft) / display.can.offsetWidth) * display.width,
 		((v.y - display.can.offsetTop) / display.can.offsetHeight) * display.height
 	);
 }
 
-function rotate(v, deg, clockWise = false) {
+function rotate(v, deg) {
 	let sin = Math.sin(deg),
         cos = Math.cos(deg);
         
-	return clockWise ? new Vec(v.x * cos - v.y * sin, v.x * sin + v.y * cos) : new Vec(v.x * cos + v.y * sin, v.y * cos - v.x * sin);
+	return new Vec(v.x * cos + v.y * sin, v.y * cos - v.x * sin);
 }
 
-function circle(v, radius, color = "white") {
+function fillCircle(pos, radius, color = "white") {
 	buf.save();
 	buf.beginPath();
 
 	buf.fillStyle = color;
-	buf.arc(v.x, v.y, radius, 0, 2 * Math.PI);
+	buf.arc(pos.x, pos.y, radius, 0, 2 * Math.PI);
 	buf.fill();
 
 	buf.restore();
 }
 
-function rect(pos, size, color = "white", offset = new Vec()) {
+function fillRect(pos, size, color = "white", offset = new Vec()) {
     pos = pos.add(offset);
 
     buf.save();
@@ -60,3 +60,5 @@ function line(s, e, width = 10, color = "white") {
 
 	buf.restore();
 }
+
+Object.assign(window, { lerp, lerpv, screenPointToWorldPoint, fillCircle, fillRect, line })
