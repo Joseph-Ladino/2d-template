@@ -1,8 +1,8 @@
-import "./engine/vec.js";
-import "./engine/tools.js";
-import Display from "./engine/display.js";
-import Engine from "./engine/engine.js";
-import Player from "./game/player.js";
+import "../vec.js";
+import "../tools.js";
+import Display from "../display.js";
+import Engine from "../engine.js";
+import Player from "./player.js";
 
 const display = new Display(draw, document.getElementById("can"), 1600, 900);
 const engine = new Engine(loop, display, 60);

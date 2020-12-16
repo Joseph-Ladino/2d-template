@@ -1,4 +1,4 @@
-import { Circle } from "../engine/shapes.js"
+import { Circle } from "../shapes.js"
 
 export default class Player extends Circle {
     constructor(x = 0, y = 0, radius = 20) {
