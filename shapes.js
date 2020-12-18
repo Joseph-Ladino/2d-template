@@ -6,6 +6,11 @@ class Rectangle {
 		this.halfSize = this.size.mlts(0.5);
 	}
 
+	closestPointToEdge(p) {
+		let tl = this.tl, br = this.br;
+		return new Vec(Math.max(tl.x, Math.min(p.x, br.x)), Math.max(tl.y, Math.min(p.y, br.y)));
+	}
+
 	pointOverlap(p) {
 		let tl = this.tl;
 		let br = this.br;
@@ -20,6 +25,13 @@ class Rectangle {
 		let br2 = r.br;
 
 		return !(tl1.x >= br2.x || br1.x <= tl2.x || tl1.y >= br2.y || br1.y <= tl2.y);
+	}
+
+	circleOverlap(c) {
+		// https://yal.cc/rectangle-circle-intersection-test/
+		// tldr, if distance between closest point on rect and circle
+		// is less than circle radius, collision = true
+		return this.closestPointToEdge(c.pos).sub(c.pos).magSq <= c.radius * c.radius;
 	}
 
 	draw() {

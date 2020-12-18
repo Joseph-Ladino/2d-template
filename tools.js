@@ -42,6 +42,18 @@ function fillCircle(pos, radius, color = "white") {
 	buf.restore();
 }
 
+function strokeCircle(pos, radius, thickness = 2, color = "white") {
+	buf.save();
+	buf.beginPath();
+
+	buf.lineWidth = thickness;
+	buf.strokeStyle = color;
+	buf.arc(pos.x, pos.y, radius, 0, 2 * Math.PI);
+	buf.stroke();
+
+	buf.restore();
+}
+
 function fillRect(pos, size, color = "white", offset = new Vec()) {
 	pos = pos.sub(offset);
 
@@ -50,6 +62,19 @@ function fillRect(pos, size, color = "white", offset = new Vec()) {
 
 	buf.fillStyle = color;
 	buf.fillRect(pos.x, pos.y, size.x, size.y);
+
+	buf.restore();
+}
+
+function strokeRect(pos, size, thickness = 2, color = "white", offset = new Vec()) {
+	pos = pos.sub(offset);
+
+	buf.save();
+	buf.beginPath();
+
+	buf.lineWidth = thickness;
+	buf.strokeStyle = color;
+	buf.strokeRect(pos.x, pos.y, size.x, size.y);
 
 	buf.restore();
 }
@@ -67,4 +92,4 @@ function line(s, e, width = 10, color = "white") {
 	buf.restore();
 }
 
-Object.assign(window, { lerp, lerpv, shortestAngle, lerpRot, rotate, screenPointToWorldPoint, fillCircle, fillRect, line });
+Object.assign(window, { lerp, lerpv, shortestAngle, lerpRot, rotate, screenPointToWorldPoint, fillCircle, strokeCircle, fillRect, strokeRect, line });
