@@ -46,6 +46,12 @@ class Vec {
 		this.y = v.y || 0;
 	}
 
+	project(v) {
+		let dp = this.dot(v);
+		let m = v.mag();
+		return new Vec(dp, dp).mlts(1 / m);
+	}
+
 	// mapped between 0 and 2 PI
 	get angle() {
 		return (Math.atan2(this.y, this.x) + Math.PI2) % Math.PI2;
@@ -53,6 +59,12 @@ class Vec {
 	// mapped between -PI and PI
 	get angle2() {
 		return Math.atan2(this.y, this.x);
+	}
+
+	set angle(rad) {
+		let len = this.len;
+		this.x = Math.cos(rad) * len;
+		this.y = Math.sin(rad) * len;
 	}
 
 	get clone() {
