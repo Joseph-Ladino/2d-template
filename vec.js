@@ -62,9 +62,7 @@ class Vec {
 	}
 
 	set angle(rad) {
-		let len = this.len;
-		this.x = Math.cos(rad) * len;
-		this.y = Math.sin(rad) * len;
+		this.set(new Vec(Math.cos(rad), Math.sin(rad)).mlts(this.mag));
 	}
 
 	get clone() {

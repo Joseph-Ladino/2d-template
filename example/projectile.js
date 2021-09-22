@@ -43,7 +43,7 @@ class Buckshot extends Circle {
         buf.drawImage(this.sprite.image, -this.radius, -this.radius, this.radius * 2, this.radius * 2);
         buf.restore();
 
-        strokeCircle(interp, this.radius);
+        if(window.drawDebug) strokeCircle(interp, this.radius);
     }
 }
 

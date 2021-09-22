@@ -23,6 +23,7 @@ export default class Player extends Circle {
 
         this.backgroundTrack.loop = true;
         this.backgroundTrack.muted = true;
+        this.backgroundTrack.volume = 0.35;
 
         loadBulkAssets([this.sprite, this.backgroundTrack, this.gunshotSound]).then(_ => this.backgroundTrack.audio.play());
     }
@@ -95,7 +96,7 @@ export default class Player extends Circle {
 		buf.drawImage(this.sprite.image, -this.radius, -this.radius, this.radius * 2, this.radius * 2, );
 		buf.restore();
 
-        strokeCircle(interp, this.radius);
+        if(window.drawDebug) strokeCircle(interp, this.radius);
 
         this.bullets.forEach(b => b.draw(alpha));
 	}

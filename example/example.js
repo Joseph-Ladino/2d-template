@@ -9,6 +9,7 @@ const engine = new Engine(loop, display, 60);
 const player = new Player(800, 450, 130);
 
 window.friction = 0.9;
+window.drawDebug = false;
 
 // drawloop (runs as many times as possible per second)
 function draw(alpha) {

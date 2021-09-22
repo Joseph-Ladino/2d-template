@@ -48,9 +48,9 @@ class Mouse extends Vec {
 	mouseup(e) {
 		this.updatePos(e);
 
-        if(!e.button == 0)
+        if(e.button == 0)
             this.lDown = this.lClick = false;
-        else if(!e.button == 2)
+        else if(e.button == 2)
             this.rDown = this.rClick = false;
         
 	}
