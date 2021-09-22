@@ -6,7 +6,7 @@ import Player from "./player.js";
 
 const display = new Display(draw, document.getElementById("can"), 1600, 900);
 const engine = new Engine(loop, display, 60);
-const player = new Player(800, 450, 30);
+const player = new Player(800, 450, 130);
 
 window.friction = 0.9;
 
@@ -18,7 +18,7 @@ function draw(alpha) {
 
 // gameloop (runs engine.fps times per second)
 function loop(ms) {
-    player.update();
+    player.update(ms);
 }
 
 engine.start();

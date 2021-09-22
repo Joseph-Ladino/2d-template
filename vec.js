@@ -55,6 +55,10 @@ class Vec {
 		return Math.atan2(this.y, this.x);
 	}
 
+    set angle(value) {
+        this.set(new Vec(Math.cos(value), Math.sin(value)).mlts(this.mag));
+    }
+
 	get clone() {
 		return new Vec(this.x, this.y);
 	}
