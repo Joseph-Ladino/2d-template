@@ -16,6 +16,9 @@ class Mouse extends Vec {
 		this.rDown = false;
 		this.rDrag = false;
 
+        this.lClick = false;
+        this.rClick = false;
+
 		this.init();
 	}
 
@@ -29,8 +32,8 @@ class Mouse extends Vec {
 		this.updatePos(e);
 		this.dragStart.set(this);
 
-		this.lDown = e.button == 0;
-		this.rDown = e.button == 2;
+		this.lDown = this.lClick = e.button == 0;
+		this.rDown = this.rClick = e.button == 2;
 	}
 
 	mousemove(e) {
@@ -45,9 +48,17 @@ class Mouse extends Vec {
 	mouseup(e) {
 		this.updatePos(e);
 
-		this.lDown = !(e.button == 0);
-		this.rDown = !(e.button == 2);
+        if(!e.button == 0)
+            this.lDown = this.lClick = false;
+        else if(!e.button == 2)
+            this.rDown = this.rClick = false;
+        
 	}
+
+    clearClicked() {
+        this.lClick = false;
+        this.rClick = false;
+    }
 
 	init() {
 		document.onmousedown = (e) => this.mousedown(e);

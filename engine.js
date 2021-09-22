@@ -30,6 +30,7 @@ export default class Engine {
 		while (this.elapsedTime >= this.timeStep) {
 			this.gameLoop(this.timeStep);
 			this.keyboard.clearPressed();
+            this.mouse.clearClicked();
 
 			this.elapsedTime -= this.timeStep;
 		}
