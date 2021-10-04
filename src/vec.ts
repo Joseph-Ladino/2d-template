@@ -102,4 +102,5 @@ export default class Vec {
 	}
 }
 
-(<any>globalThis).Vec = Vec;
+// for console access
+Object.assign(window, { Vec });

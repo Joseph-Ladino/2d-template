@@ -2,6 +2,7 @@ import Vec from "./vec.js";
 let buf;
 export function initTools(display) {
     buf = display.buf;
+    // for console access
     Object.assign(window, { lerp, lerpv, shortestAngle, lerpRot, rotate, screenPointToWorldPoint, fillCircle, strokeCircle, fillRect, strokeRect, line });
 }
 export function lerp(n1, n2, t) {
@@ -65,7 +66,7 @@ export function line(s, e, width = 10, color = "white") {
     buf.beginPath();
     buf.strokeStyle = color;
     buf.lineWidth = width;
-    buf.moveTo(s.x, s.e);
+    buf.moveTo(s.x, s.y);
     buf.lineTo(e.x, e.y);
     buf.stroke();
     buf.restore();

@@ -25,6 +25,9 @@ export default class Engine {
 		this.mouse = new Mouse(display);
 		this.keyboard = new Keyboard();
 
+		// for console access
+		Object.assign(window, { mouse: this.mouse, keyboard: this.keyboard });
+
 		this.hnd = 0;
 		this.timePrev = 0;
 		this.timeStep = 1000 / fps;

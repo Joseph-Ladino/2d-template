@@ -44,7 +44,7 @@ class Mouse extends Vec {
 	}
 
 	updatePos(e: MouseEvent) {
-		let pos = screenPointToWorldPoint(this.dsp, e);
+		let pos = screenPointToWorldPoint(this.dsp, <Vec><unknown>e);
 		this.delta = pos.sub(this);
 		this.set(pos);
 	}

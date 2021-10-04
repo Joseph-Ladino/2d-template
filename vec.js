@@ -86,4 +86,5 @@ export default class Vec {
         this.set(this.unit.mlts(n));
     }
 }
-globalThis.Vec = Vec;
+// for console access
+Object.assign(window, { Vec });
