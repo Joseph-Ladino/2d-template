@@ -9,8 +9,9 @@ const buf = display.buf;
 
 const mouse = engine.mouse;
 const keyboard = engine.keyboard;
+const gamepadManager  = engine.gamepadManager;
 
 initTools(display);
 
-export { display, buf, engine, mouse, keyboard };
+export { display, buf, engine, mouse, keyboard, gamepadManager };
 export * as tools from "./tools.js";

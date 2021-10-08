@@ -1,5 +1,5 @@
 import type Display from './display.js';
-import { Mouse, Keyboard } from "./input.js";
+import { Mouse, Keyboard, GamepadManager } from "./input.js";
 
 export default class Engine {
 
@@ -8,6 +8,7 @@ export default class Engine {
 
     mouse: Mouse;
     keyboard: Keyboard;
+	gamepadManager: GamepadManager;
 
     hnd: number;
     timePrev: number;
@@ -24,9 +25,11 @@ export default class Engine {
 
 		this.mouse = new Mouse(display);
 		this.keyboard = new Keyboard();
+		this.gamepadManager = new GamepadManager();
+		this.gamepadManager.init();
 
 		// for console access
-		Object.assign(window, { mouse: this.mouse, keyboard: this.keyboard });
+		Object.assign(window, { mouse: this.mouse, keyboard: this.keyboard, gamepadManager: this.gamepadManager });
 
 		this.hnd = 0;
 		this.timePrev = 0;
@@ -48,12 +51,17 @@ export default class Engine {
 		this.elapsedTime += this.timeDelta;
 		this.timePrev = now;
 
+		// if we miss 5 frames, only update once
 		if (this.elapsedTime >= 5 * this.timeStep) this.elapsedTime = 0;
 
 		while (this.elapsedTime >= this.timeStep) {
+			this.gamepadManager.pollGamepads();
+			
 			this.gameLoop(this.timeStep);
+
 			this.keyboard.clearPressed();
             this.mouse.clearClicked();
+			this.gamepadManager.clearPressed();
 
 			this.elapsedTime -= this.timeStep;
 		}

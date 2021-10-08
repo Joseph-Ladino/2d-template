@@ -51,7 +51,7 @@ class Mouse extends Vec {
         document.onmouseup = (e) => this.mouseup(e);
     }
 }
-class Key {
+class InputButton {
     constructor() {
         this.down = false;
         this.up = true;
@@ -59,6 +59,7 @@ class Key {
         this.held = false;
         this.isPlaceholder = false;
     }
+    // order of setting is important
     set(down) {
         this.down = down;
         this.pressed = down && this.up;
@@ -69,13 +70,13 @@ class Key {
 class Keyboard {
     constructor() {
         this.keys = {};
-        this.blankKey = new Key();
+        this.blankKey = new InputButton();
         this.blankKey.isPlaceholder = true;
         this.init();
     }
     keyUpDown(e) {
         if (!this.keys[e.key])
-            this.keys[e.key] = new Key();
+            this.keys[e.key] = new InputButton();
         let key = this.keys[e.key];
         let down = e.type == "keydown";
         key.set(down);
@@ -104,4 +105,122 @@ class Keyboard {
         document.onkeyup = (e) => this.keyUpDown(e);
     }
 }
-export { Mouse, Key, Keyboard };
+class Gamepad {
+    constructor() {
+        this.stickDeadzone = 0.05;
+        this.triggerDeadzone = 0.05;
+        this.connected = false;
+        this.triggers = [0, 0];
+        this.buttons = Array.from({ length: 18 }, () => new InputButton());
+        this.axes = [0, 0, 0, 0];
+    }
+    reset() {
+        this.triggers = [0, 0];
+        this.buttons.forEach(b => b.set(false));
+        this.axes = [0, 0, 0, 0];
+    }
+    setButtons(arr) {
+        for (let i in arr)
+            this.buttons[i].set(arr[i].pressed);
+        this.triggers[0] = arr[6].value > this.triggerDeadzone ? arr[6].value : 0;
+        this.triggers[1] = arr[7].value > this.triggerDeadzone ? arr[7].value : 0;
+    }
+    setAxes(arr) {
+        for (let i in arr)
+            this.axes[i] = Math.abs(arr[i]) > this.stickDeadzone ? arr[i] : 0;
+    }
+    setFromJSGamepad(gp) {
+        this.setButtons(gp.buttons);
+        this.setAxes(gp.axes);
+    }
+    clearPressed() {
+        this.buttons.forEach(b => b.pressed = false);
+    }
+    get lStick() {
+        return new Vec(this.axes[0], this.axes[1]);
+    }
+    get rStick() {
+        return new Vec(this.axes[2], this.axes[3]);
+    }
+    get lStickButton() {
+        return this.buttons[10];
+    }
+    get rStickButton() {
+        return this.buttons[11];
+    }
+    get lTrigger() {
+        return this.triggers[0];
+    }
+    get rTrigger() {
+        return this.triggers[1];
+    }
+    get lShoulder() {
+        return this.buttons[4];
+    }
+    get rShoulder() {
+        return this.buttons[5];
+    }
+    get dpadUp() {
+        return this.buttons[12];
+    }
+    get dpadDown() {
+        return this.buttons[13];
+    }
+    get dpadLeft() {
+        return this.buttons[14];
+    }
+    get dpadRight() {
+        return this.buttons[15];
+    }
+    get a() {
+        return this.buttons[0];
+    }
+    get b() {
+        return this.buttons[1];
+    }
+    get x() {
+        return this.buttons[2];
+    }
+    get y() {
+        return this.buttons[3];
+    }
+    get start() {
+        return this.buttons[9];
+    }
+    get select() {
+        return this.buttons[8];
+    }
+    get home() {
+        return this.buttons[16];
+    }
+}
+class GamepadManager {
+    constructor() {
+        this.gamepads = Array.from({ length: 4 }, () => new Gamepad());
+    }
+    getGamepad(index) {
+        return this.gamepads[index];
+    }
+    pollGamepads() {
+        let gp = navigator.getGamepads() || [];
+        for (let g of gp) {
+            if (g)
+                this.gamepads[g.index].setFromJSGamepad(g);
+        }
+    }
+    connectHandler(e) {
+        this.gamepads[e.gamepad.index].connected = true;
+        this.pollGamepads();
+    }
+    disconnectHandler(e) {
+        this.gamepads[e.gamepad.index].connected = false;
+    }
+    clearPressed() {
+        this.gamepads.forEach(g => g.clearPressed());
+    }
+    init() {
+        window.addEventListener("gamepadconnected", (e) => this.connectHandler(e));
+        window.addEventListener("gamepaddisconnected", (e) => this.disconnectHandler(e));
+    }
+}
+export { Mouse, Keyboard, Gamepad, GamepadManager, InputButton };

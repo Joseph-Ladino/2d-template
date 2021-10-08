@@ -1,13 +1,15 @@
 import Vec from "../vec.js";
 import { Circle } from "../shapes.js"
 import { Buckshot } from "./projectile.js";
-import { mouse, keyboard, buf } from "../globals.js"
+import { mouse, keyboard, buf, gamepadManager } from "../globals.js"
 import { ImageAsset, AudioAsset, loadBulkAssets } from "../mediaasset.js";
 import { lerp, lerpRot, lerpv, shortestAngle, strokeCircle } from "../tools.js";
+import type { InputButton, Gamepad as GP } from "../input.js"
 
 export default class Player extends Circle {
 
     options: any;
+	gamepad: GP;
 
     old: Vec;
     vel: Vec;
@@ -28,6 +30,7 @@ export default class Player extends Circle {
 		super(x, y, radius);
 
         this.options = worldOptions;
+		this.gamepad = gamepadManager.gamepads[0];
 
 		this.old = new Vec(x, y);
 		this.vel = new Vec(0, 0);
@@ -41,6 +44,18 @@ export default class Player extends Circle {
 		this.backgroundTrack.volume = 0.35;
 
 		loadBulkAssets([this.sprite, this.backgroundTrack, this.gunshotSound]).then((_) => this.backgroundTrack.audio.play());
+	}
+
+	getInput(name: string) : InputButton {
+		let gamepad = gamepadManager.getGamepad(0);
+		let gpButton = gamepad[this.options.gamepadControls[name]];
+		let kbButton = keyboard.key(this.options.keyboardControls[name]);
+
+		if(gamepad.connected && gpButton && gpButton.down) {
+			return gpButton;
+		} else {
+			return kbButton;
+		}
 	}
 
 	get angle() {
@@ -67,13 +82,18 @@ export default class Player extends Circle {
 	update(ms: number) {
 		this.old.set(this.pos);
 
-		if (mouse.lClick) this.shoot();
+		if (mouse.lClick || this.getInput("shoot").pressed) this.shoot();
 
 		let acc = new Vec(0, 0);
 
+		// typescript workaround
+		function subBool(b1: boolean, b2: boolean): number {
+			return <number><unknown>b1 - <number><unknown>b2;
+		}
+
 		// -1 == left; +1 == right; 0 == no direction
-		acc.x = <number><unknown>keyboard.down("d") - <number><unknown>keyboard.down("a");
-		acc.y = <number><unknown>keyboard.down("s") - <number><unknown>keyboard.down("w");
+		acc.x = subBool(this.getInput("right").down, this.getInput("left").down);
+		acc.y = subBool(this.getInput("down").down, this.getInput("up").down);
 		acc.mag = this.moveSpeed;
 
 		let vel = this.vel.add(acc).mlts(this.options.friction);
@@ -87,7 +107,7 @@ export default class Player extends Circle {
 		this.bullets = this.bullets.filter((b) => !b.cull);
 	}
 
-	updateRot(ms) {
+	updateRot(ms: number) {
 		this.oldRot = this.rot;
 
 		let sAngle = shortestAngle(this.rot, this.angle);
@@ -97,7 +117,7 @@ export default class Player extends Circle {
 		this.rot = (lerp(this.rot, this.rot + sAngle, lerpAlpha) + (Math.PI * 2)) % (Math.PI * 2);
 	}
 
-	draw(alpha) {
+	draw(alpha: number) {
 		if (!this.sprite.loaded) return;
 
 		let rotOffset = Math.PI * 0.5;

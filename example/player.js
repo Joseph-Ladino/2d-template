@@ -1,7 +1,7 @@
 import Vec from "../vec.js";
 import { Circle } from "../shapes.js";
 import { Buckshot } from "./projectile.js";
-import { mouse, keyboard, buf } from "../globals.js";
+import { mouse, keyboard, buf, gamepadManager } from "../globals.js";
 import { ImageAsset, AudioAsset, loadBulkAssets } from "../mediaasset.js";
 import { lerp, lerpRot, lerpv, shortestAngle, strokeCircle } from "../tools.js";
 export default class Player extends Circle {
@@ -14,6 +14,7 @@ export default class Player extends Circle {
         this.halfRotMs = 60;
         this.bullets = [];
         this.options = worldOptions;
+        this.gamepad = gamepadManager.gamepads[0];
         this.old = new Vec(x, y);
         this.vel = new Vec(0, 0);
         this.sprite = new ImageAsset("icecream", "assets/player.png");
@@ -23,6 +24,17 @@ export default class Player extends Circle {
         this.backgroundTrack.muted = true;
         this.backgroundTrack.volume = 0.35;
         loadBulkAssets([this.sprite, this.backgroundTrack, this.gunshotSound]).then((_) => this.backgroundTrack.audio.play());
+    }
+    getInput(name) {
+        let gamepad = gamepadManager.getGamepad(0);
+        let gpButton = gamepad[this.options.gamepadControls[name]];
+        let kbButton = keyboard.key(this.options.keyboardControls[name]);
+        if (gamepad.connected && gpButton && gpButton.down) {
+            return gpButton;
+        }
+        else {
+            return kbButton;
+        }
     }
     get angle() {
         return mouse.sub(this.pos).angle;
@@ -41,12 +53,16 @@ export default class Player extends Circle {
     }
     update(ms) {
         this.old.set(this.pos);
-        if (mouse.lClick)
+        if (mouse.lClick || this.getInput("shoot").pressed)
             this.shoot();
         let acc = new Vec(0, 0);
+        // typescript workaround
+        function subBool(b1, b2) {
+            return b1 - b2;
+        }
         // -1 == left; +1 == right; 0 == no direction
-        acc.x = keyboard.down("d") - keyboard.down("a");
-        acc.y = keyboard.down("s") - keyboard.down("w");
+        acc.x = subBool(this.getInput("right").down, this.getInput("left").down);
+        acc.y = subBool(this.getInput("down").down, this.getInput("up").down);
         acc.mag = this.moveSpeed;
         let vel = this.vel.add(acc).mlts(this.options.friction);
         this.vel.set(vel);
