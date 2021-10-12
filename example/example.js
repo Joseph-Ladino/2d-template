@@ -17,7 +17,7 @@ const worldOptions = {
         left: "dpadLeft",
         right: "dpadRight",
         jump: "x",
-        shoot: "rShoulder"
+        shoot: "rTrigger"
     }
 };
 const player = new Player(800, 350, 130, worldOptions);

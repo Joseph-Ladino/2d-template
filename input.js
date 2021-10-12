@@ -52,12 +52,12 @@ class Mouse extends Vec {
     }
 }
 class InputButton {
-    constructor() {
+    constructor(placeholder = false) {
         this.down = false;
         this.up = true;
         this.pressed = false;
         this.held = false;
-        this.isPlaceholder = false;
+        this.isPlaceholder = placeholder;
     }
     // order of setting is important
     set(down) {
@@ -67,11 +67,10 @@ class InputButton {
         this.up = !down;
     }
 }
+InputButton.blank = new InputButton(true);
 class Keyboard {
     constructor() {
         this.keys = {};
-        this.blankKey = new InputButton();
-        this.blankKey.isPlaceholder = true;
         this.init();
     }
     keyUpDown(e) {
@@ -82,7 +81,7 @@ class Keyboard {
         key.set(down);
     }
     key(k) {
-        return this.keys[k] || this.blankKey;
+        return this.keys[k] || InputButton.blank;
     }
     down(k) {
         return this.key(k).down;
@@ -114,6 +113,18 @@ class Gamepad {
         this.buttons = Array.from({ length: 18 }, () => new InputButton());
         this.axes = [0, 0, 0, 0];
     }
+    button(name) {
+        return this.buttons[Gamepad.buttonMap[name]] || InputButton.blank;
+    }
+    down(name) {
+        return this.button(name).down;
+    }
+    up(name) {
+        return this.button(name).up;
+    }
+    pressed(name) {
+        return this.button(name).pressed;
+    }
     reset() {
         this.triggers = [0, 0];
         this.buttons.forEach(b => b.set(false));
@@ -136,64 +147,46 @@ class Gamepad {
     clearPressed() {
         this.buttons.forEach(b => b.pressed = false);
     }
-    get lStick() {
-        return new Vec(this.axes[0], this.axes[1]);
-    }
-    get rStick() {
-        return new Vec(this.axes[2], this.axes[3]);
-    }
-    get lStickButton() {
-        return this.buttons[10];
-    }
-    get rStickButton() {
-        return this.buttons[11];
-    }
-    get lTrigger() {
-        return this.triggers[0];
-    }
-    get rTrigger() {
-        return this.triggers[1];
-    }
-    get lShoulder() {
-        return this.buttons[4];
-    }
-    get rShoulder() {
-        return this.buttons[5];
-    }
-    get dpadUp() {
-        return this.buttons[12];
-    }
-    get dpadDown() {
-        return this.buttons[13];
-    }
-    get dpadLeft() {
-        return this.buttons[14];
-    }
-    get dpadRight() {
-        return this.buttons[15];
-    }
-    get a() {
-        return this.buttons[0];
-    }
-    get b() {
-        return this.buttons[1];
-    }
-    get x() {
-        return this.buttons[2];
-    }
-    get y() {
-        return this.buttons[3];
-    }
-    get start() {
-        return this.buttons[9];
-    }
-    get select() {
-        return this.buttons[8];
-    }
-    get home() {
-        return this.buttons[16];
-    }
+    // TODO: decide whether to replace hardcoded index with map
+    get lStick() { return new Vec(this.axes[0], this.axes[1]); }
+    get rStick() { return new Vec(this.axes[2], this.axes[3]); }
+    get a() { return this.buttons[0]; }
+    get b() { return this.buttons[1]; }
+    get x() { return this.buttons[2]; }
+    get y() { return this.buttons[3]; }
+    get lShoulder() { return this.buttons[4]; }
+    get rShoulder() { return this.buttons[5]; }
+    get lTrigger() { return this.triggers[0]; }
+    get rTrigger() { return this.triggers[1]; }
+    get select() { return this.buttons[8]; }
+    get start() { return this.buttons[9]; }
+    get lStickButton() { return this.buttons[10]; }
+    get rStickButton() { return this.buttons[11]; }
+    get dpadUp() { return this.buttons[12]; }
+    get dpadDown() { return this.buttons[13]; }
+    get dpadLeft() { return this.buttons[14]; }
+    get dpadRight() { return this.buttons[15]; }
+    get home() { return this.buttons[16]; }
 }
+Gamepad.buttonMap = {
+    "a": 0,
+    "b": 1,
+    "x": 2,
+    "y": 3,
+    "lShoulder": 4,
+    "rShoulder": 5,
+    "lTrigger": 6,
+    "rTrigger": 7,
+    "select": 8,
+    "start": 9,
+    "lStick": 10,
+    "rStick": 11,
+    "dpadUp": 12,
+    "dpadDown": 13,
+    "dpadLeft": 14,
+    "dpadRight": 15,
+    "home": 16
+};
 class GamepadManager {
     constructor() {
         this.gamepads = Array.from({ length: 4 }, () => new Gamepad());

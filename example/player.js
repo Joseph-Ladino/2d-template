@@ -26,8 +26,8 @@ export default class Player extends Circle {
         loadBulkAssets([this.sprite, this.backgroundTrack, this.gunshotSound]).then((_) => this.backgroundTrack.audio.play());
     }
     getInput(name) {
-        let gamepad = gamepadManager.getGamepad(0);
-        let gpButton = gamepad[this.options.gamepadControls[name]];
+        let gamepad = this.gamepad;
+        let gpButton = gamepad.button(this.options.gamepadControls[name]);
         let kbButton = keyboard.key(this.options.keyboardControls[name]);
         if (gamepad.connected && gpButton && gpButton.down) {
             return gpButton;
@@ -35,6 +35,15 @@ export default class Player extends Circle {
         else {
             return kbButton;
         }
+    }
+    getPressed(name) {
+        return this.getInput(name).pressed;
+    }
+    getDown(name) {
+        return this.getInput(name).down;
+    }
+    getUp(name) {
+        return this.getInput(name).up;
     }
     get angle() {
         return mouse.sub(this.pos).angle;
@@ -53,7 +62,7 @@ export default class Player extends Circle {
     }
     update(ms) {
         this.old.set(this.pos);
-        if (mouse.lClick || this.getInput("shoot").pressed)
+        if (mouse.lClick || this.getPressed("shoot"))
             this.shoot();
         let acc = new Vec(0, 0);
         // typescript workaround
@@ -61,8 +70,8 @@ export default class Player extends Circle {
             return b1 - b2;
         }
         // -1 == left; +1 == right; 0 == no direction
-        acc.x = subBool(this.getInput("right").down, this.getInput("left").down);
-        acc.y = subBool(this.getInput("down").down, this.getInput("up").down);
+        acc.x = subBool(this.getDown("right"), this.getDown("left"));
+        acc.y = subBool(this.getDown("down"), this.getDown("up"));
         acc.mag = this.moveSpeed;
         let vel = this.vel.add(acc).mlts(this.options.friction);
         this.vel.set(vel);

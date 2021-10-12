@@ -47,8 +47,8 @@ export default class Player extends Circle {
 	}
 
 	getInput(name: string) : InputButton {
-		let gamepad = gamepadManager.getGamepad(0);
-		let gpButton = gamepad[this.options.gamepadControls[name]];
+		let gamepad = this.gamepad;
+		let gpButton = gamepad.button(this.options.gamepadControls[name]);
 		let kbButton = keyboard.key(this.options.keyboardControls[name]);
 
 		if(gamepad.connected && gpButton && gpButton.down) {
@@ -56,6 +56,18 @@ export default class Player extends Circle {
 		} else {
 			return kbButton;
 		}
+	}
+
+	getPressed(name: string) {
+		return this.getInput(name).pressed;
+	}
+
+	getDown(name: string) {
+		return this.getInput(name).down;
+	}
+
+	getUp(name: string) {
+		return this.getInput(name).up;
 	}
 
 	get angle() {
@@ -82,7 +94,7 @@ export default class Player extends Circle {
 	update(ms: number) {
 		this.old.set(this.pos);
 
-		if (mouse.lClick || this.getInput("shoot").pressed) this.shoot();
+		if (mouse.lClick || this.getPressed("shoot")) this.shoot();
 
 		let acc = new Vec(0, 0);
 
@@ -92,8 +104,8 @@ export default class Player extends Circle {
 		}
 
 		// -1 == left; +1 == right; 0 == no direction
-		acc.x = subBool(this.getInput("right").down, this.getInput("left").down);
-		acc.y = subBool(this.getInput("down").down, this.getInput("up").down);
+		acc.x = subBool(this.getDown("right"), this.getDown("left"));
+		acc.y = subBool(this.getDown("down"), this.getDown("up"));
 		acc.mag = this.moveSpeed;
 
 		let vel = this.vel.add(acc).mlts(this.options.friction);

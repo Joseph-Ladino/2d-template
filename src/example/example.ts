@@ -20,7 +20,7 @@ const worldOptions = {
         left: "dpadLeft",
         right: "dpadRight",
         jump: "x",
-        shoot: "rShoulder"
+        shoot: "rTrigger"
     }
 };
 
