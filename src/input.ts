@@ -171,7 +171,7 @@ class Gamepad {
 	triggerDeadzone = 0.05;
 	connected = false;
 
-	static buttonMap = {
+	static buttonMap: {[key: string]: number} = {
 		"a": 0,
 		"b": 1,
 		"x": 2,

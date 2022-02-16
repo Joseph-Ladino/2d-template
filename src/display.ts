@@ -4,19 +4,25 @@ export default class Display {
     ctx: CanvasRenderingContext2D;
     buf: CanvasRenderingContext2D;
     
-    aspectRatio: number;
-    width: number;
-    height: number;
-    wRatio: number;
-    hRatio: number;
+    aspectRatio: number = 0;
+    width: number = 0;
+    height: number = 0;
+    wRatio: number = 0;
+    hRatio: number = 0;
     
     _resize: () => void;
 
     constructor(drawLoop: (alpha: number) => void, canvas: HTMLCanvasElement, bufferWidth: number, bufferHeight: number) {
 		this.drawLoop = drawLoop;
 		this.can = canvas;
-		this.ctx = canvas.getContext("2d");
-		this.buf = document.createElement("canvas").getContext("2d");
+        
+        let ctx = canvas.getContext("2d");
+        let buf = document.createElement("canvas").getContext("2d");
+
+        if(ctx == null || buf == null) throw new Error("Could not create canvas context");
+		
+        this.ctx = ctx;
+		this.buf = buf;
 
 		this._resize = (): void => this.resize();
 		window.onresize = this._resize;
