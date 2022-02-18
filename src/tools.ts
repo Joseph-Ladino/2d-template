@@ -35,6 +35,13 @@ export function rotate(v: Vec, deg: number) {
 	return new Vec(v.x * cos - v.y * sin, v.y * cos + v.x * sin);
 }
 
+// copilot generated, might replace with distance comparison
+export function pointInLineSeg(p: Vec, a: Vec, b: Vec) {
+    let d = b.sub(a);
+    let t = d.dot(p.sub(a)) / d.magSq;
+    return t >= 0 && t <= 1;
+}
+
 export function screenPointToWorldPoint(display: Display, v: Vec) {
 	// translate by element offset and scale by ratio of buffer size to canvas size
 	return new Vec(
