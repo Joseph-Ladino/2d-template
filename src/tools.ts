@@ -110,3 +110,14 @@ export function line(s: Vec, e: Vec, width = 10, color = "white") {
 
 	buf.restore();
 }
+
+export function constrain(v: number, lower: number, upper: number) {
+    return Math.max(lower, Math.min(v, upper));
+}
+
+export function constrainv(v: Vec, lower: Vec, upper: Vec) {
+    return new Vec(
+        constrain(v.x, lower.x, upper.x),
+        constrain(v.y, lower.y, upper.y)
+    );
+}
