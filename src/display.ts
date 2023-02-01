@@ -72,8 +72,6 @@ export default class Display {
 			this.can.height = window.innerWidth / ar;
 		}
 
-        console.log(this);
-
         this.ctx.imageSmoothingEnabled = ctxSmoothing;
         this.buf.imageSmoothingEnabled = bufSmoothing;
 
