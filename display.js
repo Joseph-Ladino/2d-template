@@ -1,9 +1,18 @@
 export default class Display {
     constructor(drawLoop, canvas, bufferWidth, bufferHeight) {
+        this.aspectRatio = 0;
+        this.width = 0;
+        this.height = 0;
+        this.wRatio = 0;
+        this.hRatio = 0;
         this.drawLoop = drawLoop;
         this.can = canvas;
-        this.ctx = canvas.getContext("2d");
-        this.buf = document.createElement("canvas").getContext("2d");
+        let ctx = canvas.getContext("2d");
+        let buf = document.createElement("canvas").getContext("2d");
+        if (ctx == null || buf == null)
+            throw new Error("Could not create canvas context");
+        this.ctx = ctx;
+        this.buf = buf;
         this._resize = () => this.resize();
         window.onresize = this._resize;
         this.updateBufSize(bufferWidth, bufferHeight);
@@ -31,6 +40,8 @@ export default class Display {
     }
     resize() {
         let ar = this.width / this.height;
+        let bufSmoothing = this.buf.imageSmoothingEnabled;
+        let ctxSmoothing = this.ctx.imageSmoothingEnabled;
         if (window.innerWidth / window.innerHeight > ar) {
             this.can.width = window.innerHeight * ar;
             this.can.height = window.innerHeight;
@@ -39,6 +50,8 @@ export default class Display {
             this.can.width = window.innerWidth;
             this.can.height = window.innerWidth / ar;
         }
+        this.ctx.imageSmoothingEnabled = ctxSmoothing;
+        this.buf.imageSmoothingEnabled = bufSmoothing;
         this.updateRatios();
     }
 }

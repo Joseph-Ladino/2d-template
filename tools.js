@@ -23,6 +23,12 @@ export function rotate(v, deg) {
     let sin = Math.sin(deg), cos = Math.cos(deg);
     return new Vec(v.x * cos - v.y * sin, v.y * cos + v.x * sin);
 }
+// copilot generated, might replace with distance comparison
+export function pointInLineSeg(p, a, b) {
+    let d = b.sub(a);
+    let t = d.dot(p.sub(a)) / d.magSq;
+    return t >= 0 && t <= 1;
+}
 export function screenPointToWorldPoint(display, v) {
     // translate by element offset and scale by ratio of buffer size to canvas size
     return new Vec(((v.x - display.can.offsetLeft) * display.width) / display.can.offsetWidth, ((v.y - display.can.offsetTop) * display.height) / display.can.offsetHeight);
@@ -70,4 +76,10 @@ export function line(s, e, width = 10, color = "white") {
     buf.lineTo(e.x, e.y);
     buf.stroke();
     buf.restore();
+}
+export function constrain(v, lower, upper) {
+    return Math.max(lower, Math.min(v, upper));
+}
+export function constrainv(v, lower, upper) {
+    return new Vec(constrain(v.x, lower.x, upper.x), constrain(v.y, lower.y, upper.y));
 }

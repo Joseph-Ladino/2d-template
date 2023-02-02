@@ -47,6 +47,10 @@ export default class Vec {
         let m = v.mag;
         return new Vec(dp, dp).mlts(1 / m);
     }
+    // checks if the distance between two vecs are within a tolerance
+    static compare(v1, v2, tolerance = 0.5) {
+        return v2.sub(v1).magSq < Math.pow(tolerance, 2);
+    }
     // mapped between 0 and 2 PI
     get angle() {
         return (Math.atan2(this.y, this.x) + (Math.PI * 2)) % (Math.PI * 2);
